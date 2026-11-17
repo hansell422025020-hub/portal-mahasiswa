@@ -31,4 +31,20 @@ class MataKuliah {
     }
 }
 
+class Dosen {
+    public $nidn;
+    public $namaDosen;
+    public $bidangKeahlian;
+
+    public function __construct($nidn, $namaDosen, $bidangKeahlian) {
+        $this->nidn = $nidn;
+        $this->namaDosen = $namaDosen;
+        $this->bidangKeahlian = $bidangKeahlian;
+    }
+
+    public function getInfoDosen() {
+        return "{$this->namaDosen} (NIDN: {$this->nidn}) - Bidang: {$this->bidangKeahlian}";
+    }
+}
+
 ?>
