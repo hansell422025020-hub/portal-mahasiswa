@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "function.php";
+require_once "data.php";
 
 // Proteksi halaman: wajib login terlebih dahulu
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
@@ -10,53 +10,20 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
 
 $usernameLogin = $_SESSION['username'] ?? 'mahasiswa';
 
-// 1. Data Mahasiswa (dihubungkan dengan username login)
-$dataMahasiswa = [
-    'mahasiswa' => new Mahasiswa("422026101", "Raka Pratama", "Sistem Informasi", 3),
-    'nadia'     => new Mahasiswa("422026102", "Nadia Putri", "Informatika", 3),
-    'admin'     => new Mahasiswa("422026101", "Raka Pratama", "Sistem Informasi", 3) // Default preview untuk admin
-];
+// Tangkap Mahasiswa yang dipilih (?nim=422026001), default ke Hansell
+$nimDipilih = $_GET['nim'] ?? '422026001';
+if (!isset($mapMahasiswa[$nimDipilih])) {
+    $nimDipilih = '422026001';
+}
+$mhsAktif = $mapMahasiswa[$nimDipilih];
 
-// Ambil objek mahasiswa sesuai akun yang sedang login
-$mhsAktif = $dataMahasiswa[$usernameLogin] ?? $dataMahasiswa['mahasiswa'];
-
-// 2. Data Mata Kuliah yang tersedia
-$daftarMatkul = [
-    'IF101' => new MataKuliah("IF101", "Pemrograman Web", 3),
-    'IF102' => new MataKuliah("IF102", "Basis Data", 3),
-    'SI201' => new MataKuliah("SI201", "Analisis & Perancangan Sistem", 4)
-];
-
-// 3. Database Nilai per Mahasiswa (NIM) & per Mata Kuliah (Kode MK)
-$nRakaWeb = new nilai(); $nRakaWeb->nilai_tugas = 88; $nRakaWeb->nilai_UTS = 90; $nRakaWeb->nilai_UAS = 86;
-$nRakaDb  = new nilai(); $nRakaDb->nilai_tugas  = 78; $nRakaDb->nilai_UTS  = 82; $nRakaDb->nilai_UAS  = 80;
-$nRakaAps = new nilai(); $nRakaAps->nilai_tugas = 92; $nRakaAps->nilai_UTS = 89; $nRakaAps->nilai_UAS = 94;
-
-$nNadiaWeb = new nilai(); $nNadiaWeb->nilai_tugas = 75; $nNadiaWeb->nilai_UTS = 72; $nNadiaWeb->nilai_UAS = 76;
-$nNadiaDb  = new nilai(); $nNadiaDb->nilai_tugas  = 85; $nNadiaDb->nilai_UTS  = 88; $nNadiaDb->nilai_UAS  = 84;
-$nNadiaAps = new nilai(); $nNadiaAps->nilai_tugas = 68; $nNadiaAps->nilai_UTS = 70; $nNadiaAps->nilai_UAS = 66;
-
-$dataNilaiPerMhs = [
-    '422026101' => [
-        'IF101' => $nRakaWeb,
-        'IF102' => $nRakaDb,
-        'SI201' => $nRakaAps,
-    ],
-    '422026102' => [
-        'IF101' => $nNadiaWeb,
-        'IF102' => $nNadiaDb,
-        'SI201' => $nNadiaAps,
-    ]
-];
-
-// 4. Tangkap Mata Kuliah yang dipilih user dari URL (?kode=IF101), default ke IF101
+// Tangkap Mata Kuliah yang dipilih (?kode=IF101), default ke IF101
 $kodeDipilih = $_GET['kode'] ?? 'IF101';
-if (!isset($daftarMatkul[$kodeDipilih])) {
+if (!isset($mapMatkul[$kodeDipilih])) {
     $kodeDipilih = 'IF101';
 }
 
-// Ambil detail Matkul A & Nilai milik Murid A saja
-$matkulTerpilih = $daftarMatkul[$kodeDipilih];
+$matkulTerpilih = $mapMatkul[$kodeDipilih];
 $nilaiTerpilih  = $dataNilaiPerMhs[$mhsAktif->nim][$kodeDipilih] ?? null;
 
 // Fungsi menentukan predikat & status kelulusan
@@ -100,30 +67,44 @@ function getPredikat($rataRata) {
 
     <main class="container mb-5" style="max-width: 780px;">
         
-        <!-- Identitas Mahasiswa yang Sedang Login -->
+        <!-- Filter Mahasiswa & Mata Kuliah -->
         <div class="card shadow-sm border-0 rounded-4 mb-4">
-            <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div>
-                    <span class="badge bg-primary-subtle text-primary mb-1">Akun Aktif: <?= htmlspecialchars($usernameLogin); ?></span>
-                    <h4 class="fw-bold mb-0"><?= $mhsAktif->namaMahasiswa; ?></h4>
-                    <small class="text-muted">NIM: <?= $mhsAktif->nim; ?> | <?= $mhsAktif->jurusan; ?> (Semester <?= $mhsAktif->semester; ?>)</small>
-                </div>
-                <div class="text-md-end">
-                    <small class="text-muted d-block">Pilih Mata Kuliah:</small>
-                    <form method="GET" action="detail_matkul.php" class="mt-1">
-                        <select name="kode" class="form-select form-select-sm fw-semibold" onchange="this.form.submit()">
-                            <?php foreach ($daftarMatkul as $kode => $mk): ?>
-                                <option value="<?= $kode; ?>" <?= ($kode === $kodeDipilih) ? 'selected' : ''; ?>>
-                                    <?= $mk->kodeMatkul; ?> - <?= $mk->namaMatkul; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </form>
+            <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <span class="badge bg-primary-subtle text-primary mb-1">Akun Login: <?= htmlspecialchars($usernameLogin); ?></span>
+                        <h4 class="fw-bold mb-0"><?= $mhsAktif->namaMahasiswa; ?></h4>
+                        <small class="text-muted">NIM: <?= $mhsAktif->nim; ?> | <?= $mhsAktif->jurusan; ?> (Sem. <?= $mhsAktif->semester; ?>)</small>
+                    </div>
+                    <div class="col-md-6">
+                        <form method="GET" action="detail_matkul.php" class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small text-muted mb-1">Pilih Mahasiswa:</label>
+                                <select name="nim" class="form-select form-select-sm fw-semibold" onchange="this.form.submit()">
+                                    <?php foreach ($mapMahasiswa as $nim => $mhs): ?>
+                                        <option value="<?= $nim; ?>" <?= ($nim === $nimDipilih) ? 'selected' : ''; ?>>
+                                            <?= $mhs->namaMahasiswa; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted mb-1">Pilih Mata Kuliah:</label>
+                                <select name="kode" class="form-select form-select-sm fw-semibold" onchange="this.form.submit()">
+                                    <?php foreach ($mapMatkul as $kode => $mk): ?>
+                                        <option value="<?= $kode; ?>" <?= ($kode === $kodeDipilih) ? 'selected' : ''; ?>>
+                                            <?= $mk->kodeMatkul; ?> - <?= $mk->namaMatkul; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Detail Nilai & Predikat Khusus Murid A pada Matkul A -->
+        <!-- Detail Nilai & Predikat Khusus Mahasiswa & Matkul yang Dipilih -->
         <?php if ($nilaiTerpilih): ?>
             <?php
                 $rataRata = $nilaiTerpilih->hitungRataRata(
@@ -180,10 +161,6 @@ function getPredikat($rataRata) {
                         </div>
                     </div>
                 </div>
-            </div>
-        <?php else: ?>
-            <div class="alert alert-warning rounded-4">
-                Data nilai untuk mata kuliah <b><?= $matkulTerpilih->namaMatkul; ?></b> belum tersedia.
             </div>
         <?php endif; ?>
 
