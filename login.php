@@ -1,133 +1,104 @@
 <?php
 session_start();
 
-if (isset($_SESSION['login'])) {
+if (isset($_SESSION['login']) && $_SESSION['login'] === true) {
     header("Location: index.php");
     exit;
 }
 
 $error = "";
 
-if (isset($_POST['submit'])) {
-    $nim = $_POST['nim'];
-    $password = $_POST['password'];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    if ($nim === "admin" && $password === "123") {
+    $akun_valid = [
+        "admin" => "12345",
+        "mahasiswa" => "12345"
+    ];
+
+    if (isset($akun_valid[$username]) && $akun_valid[$username] === $password) {
+
         $_SESSION['login'] = true;
-        $_SESSION['nim'] = $nim;
+        $_SESSION['username'] = $username;
+
         header("Location: index.php");
         exit;
     } else {
-        $error = "NIM atau password salah!";
+        $error = "Username atau password salah!";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Portal Mahasiswa</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .login-box {
-            background: #ffffff;
-            padding: 32px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 380px;
-        }
-        .login-box h2 {
-            text-align: center;
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-        .login-box p.subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #334155;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-        .btn-login {
-            width: 100%;
-            padding: 10px;
-            background-color: #2563eb;
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        .btn-login:hover {
-            background-color: #1d4ed8;
-        }
-        .error-msg {
-            background-color: #fee2e2;
-            color: #b91c1c;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="login-box">
-        <h2>Portal Mahasiswa</h2>
-        <p class="subtitle">Silakan masuk ke akun kamu</p>
+<body class="bg-light">
 
-        <?php if ($error !== "") : ?>
-            <div class="error-msg"><?= $error; ?></div>
-        <?php endif; ?>
+    <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+        <div class="card shadow-sm border-0 rounded-4" style="max-width: 400px; width: 100%;">
+            <div class="card-body p-4 p-md-5">
+                
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-primary mb-1">Portal Mahasiswa</h3>
+                    <p class="text-muted small">Silakan masuk untuk melanjutkan</p>
+                </div>
 
-        <form action="" method="POST">
-            <div class="form-group">
-                <label for="nim">NIM / Username</label>
-                <input type="text" id="nim" name="nim" placeholder="Masukkan admin" required>
+                <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger py-2 small text-center" role="alert">
+                        <?= $error; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_GET['pesan']) && $_GET['pesan'] === 'logout'): ?>
+                    <div class="alert alert-success py-2 small text-center" role="alert">
+                        Kamu berhasil keluar dari sistem.
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="">
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autofocus>
+                        <label for="username">Username</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <label for="password">Password</label>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="lihatPassword" onclick="togglePassword()">
+                        <label class="form-check-label small text-muted" for="lihatPassword">
+                            Tampilkan password
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3">
+                        Masuk
+                    </button>
+                </form>
+
+                <div class="mt-4 pt-3 border-top text-center">
+                    <small class="text-muted">Akun demo: <b>admin</b> / <b>12345</b></small>
+                </div>
+
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Masukkan 123" required>
-            </div>
-            <button type="submit" name="submit" class="btn-login">Masuk</button>
-        </form>
+        </div>
     </div>
+
+    <script>
+        function togglePassword() {
+            const inputPass = document.getElementById("password");
+            inputPass.type = (inputPass.type === "password") ? "text" : "password";
+        }
+    </script>
+
 </body>
 </html>
