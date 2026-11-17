@@ -1,5 +1,5 @@
 <?php
-    require_once "function.php"
+    require_once "function.php";
 
     $matkul1 = new MataKuliah("IF101", "Pemrograman Web", 3);
     $matkul2 = new MataKuliah("IF102", "Basis Data", 3);
@@ -8,7 +8,11 @@
     $dosen2 = new Dosen("0987654321", "Siti Aminah, M.T.", "Data Science");
 
     $nilai1 = new Nilai(85, 90, 88);
-    $nilai2 = new Nilai(75, 80, 78);    
+    $nilai2 = new Nilai(75, 80, 78);   
+    
+    $daftarMatkul = [$matkul1, $matkul2];
+    $daftarDosen = [$dosen1, $dosen2];
+    $daftarNilai = [$nilai1, $nilai2];
 ?>
 
 <!DOCTYPE html>
@@ -21,6 +25,65 @@
             <link rel="stylesheet" href="css/styles.css">
         </head>
         <body>
+            
+            <header>
+                <h1>Portal Mahasiswa</h1>
+                <p>Selamat Datang di Portal Mahasiswa</p>
+            </header>
 
+            <nav>
+                <a href="index.php">Beranda</a>
+                <a href="mahasiswa.php">Mahasiswa</a>
+            </nav>
+
+            <main>
+
+                <section>
+                    <h2>Data Mata Kuliah</h2>
+
+                    <?php foreach ($daftarMatkul as $matkul): ?>
+                        <article>
+                            <h3><?= $matkul->namaMatkul; ?></h3>
+                            <p>Kode Mata Kuliah: <?= $matkul->kodeMatkul; ?></p>
+                            <p>SKS: <?= $matkul->sks; ?></p>
+                        </article>
+                    <?php endforeach; ?>
+
+                </section>
+
+
+                <section>
+                    <h2>Data Dosen</h2>
+
+                    <?php foreach ($daftarDosen as $dosen): ?>
+                        <article>
+                            <h3><?= $dosen->namaDosen; ?></h3>
+                            <p>NIDN: <?= $dosen->nidn; ?></p>
+                            <p>Bidang Keahlian: <?= $dosen->bidangKeahlian; ?></p>
+                        </article>
+                    <?php endforeach; ?>
+
+                </section>
+
+
+                <section>
+                    <h2>Data Nilai</h2>
+
+                    <?php foreach ($daftarNilai as $index => $nilai): ?>
+                        <article>
+                            <h3>Nilai Mahasiwa <?= $index + 1; ?></h3>
+                            <p>Nilai Tugas: <?= $nilai->nilai_tugas; ?></p>
+                            <p>Nilai UTS: <?= $nilai->nilai_UTS; ?></p>
+                            <p>Nilai UAS: <?= $nilai->nilai_UAS; ?></p>
+                        </article>
+                    <?php endforeach; ?>
+
+                </section>
+
+            </main>
+
+            <footer>
+                <p>&copy; 2026 Portal Mahasiswa Kelompom 5</p>
+            </footer>
         </body>
     </html>
