@@ -8,11 +8,15 @@
     $dosen2 = new Dosen("0987654321", "Siti Aminah, M.T.", "Data Science");
 
     $nilai1 = new Nilai(85, 90, 88);
-    $nilai2 = new Nilai(75, 80, 78);   
+    $nilai2 = new Nilai(75, 80, 78); 
     
+    $mahasiswa1 = new Mahasiswa("422026001", "Hansell Sarwaguna", "Sistem Informasi", 3);
+    $mahasiswa2 = new Mahasiswa("422026002", "Adib Dhammika", "Informatika", 3);
+
     $daftarMatkul = [$matkul1, $matkul2];
     $daftarDosen = [$dosen1, $dosen2];
     $daftarNilai = [$nilai1, $nilai2];
+    $daftarMahasiswa = [$mahasiswa1];
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +75,7 @@
 
                     <?php foreach ($daftarNilai as $index => $nilai): ?>
                         <article>
-                            <h3>Nilai Mahasiwa <?= $index + 1; ?></h3>
+                            <h3>Nilai Mahasiswa <?= $index + 1; ?></h3>
                             <p>Nilai Tugas: <?= $nilai->nilai_tugas; ?></p>
                             <p>Nilai UTS: <?= $nilai->nilai_UTS; ?></p>
                             <p>Nilai UAS: <?= $nilai->nilai_UAS; ?></p>
@@ -80,10 +84,24 @@
 
                 </section>
 
+                <section>
+                    <h2>Data Mahasiswa</h2>
+
+                    <?php foreach ($daftarMahasiswa as $mahasiswa): ?>
+                        <article>
+                            <h3><?= $mahasiswa->namaMahasiswa; ?></h3>
+                            <p>NIM: <?= $mahasiswa->nim; ?></p>
+                            <p>Jurusan: <?= $mahasiswa->jurusan; ?></p>
+                            <p>Semester: <?= $mahasiswa->semester; ?></p>
+                        </article>
+                    <?php endforeach; ?>
+
+                </section>
+
             </main>
 
             <footer>
-                <p>&copy; 2026 Portal Mahasiswa Kelompom 5</p>
+                <p>&copy; 2026 Portal Mahasiswa Kelompok 5</p>
             </footer>
         </body>
     </html>
