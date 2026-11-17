@@ -47,4 +47,21 @@ class Dosen {
     }
 }
 
+class JadwalKuliah {
+    public $hari;
+    public $jam;
+    public $ruangan;
+
+    public function __construct($hari, $jam, $ruangan) {
+        $this->hari = $hari;
+        $this->jam = $jam;
+        $this->ruangan = $ruangan;
+    }
+
+    public function getInfoJadwal() {
+        return "Hari {$this->hari}, Pukul {$this->jam} - Ruang {$this->ruangan}";
+    }
+}
+
 ?>
+
