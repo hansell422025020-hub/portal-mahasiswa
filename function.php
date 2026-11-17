@@ -63,5 +63,23 @@ class JadwalKuliah {
     }
 }
 
+class Mahasiswa {
+    public $nim;
+    public $namaMahasiswa;
+    public $jurusan;
+    public $semester;
+
+    public function __construct($nim, $namaMahasiswa, $jurusan, $semester) {
+        $this->nim = $nim;
+        $this->namaMahasiswa = $namaMahasiswa;
+        $this->jurusan = $jurusan;
+        $this->semester = $semester;
+    }
+
+    public function getInfoMahasiswa() {
+        return "{$this->namaMahasiswa} - {$this->nim} - {$this->jurusan} - Semester {$this->semester}";
+    }
+}
+
 ?>
 
