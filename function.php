@@ -19,7 +19,21 @@
     }
     $rata_rata = ($nilaiTugas + $nilaiUTS + $nilaiUAS) / 3;
     return $rata_rata;
-}
+    }
+    
+    function getPredikat($rataRata) {
+        if ($rataRata >= 85) {
+            return ['predikat' => 'A', 'badge' => 'bg-success', 'kelulusan' => 'LULUS', 'keterangan' => 'Sangat Baik'];
+        } elseif ($rataRata >= 75) {
+            return ['predikat' => 'B', 'badge' => 'bg-success', 'kelulusan' => 'LULUS', 'keterangan' => 'Baik'];
+        } elseif ($rataRata >= 65) {
+            return ['predikat' => 'C', 'badge' => 'bg-success', 'kelulusan' => 'LULUS', 'keterangan' => 'Cukup'];
+        } elseif ($rataRata >= 50) {
+            return ['predikat' => 'D', 'badge' => 'bg-danger', 'kelulusan' => 'TIDAKLULUS', 'keterangan' => 'Kurang'];
+        } else {
+            return ['predikat' => 'E', 'badge' => 'bg-dnger', 'kelulusan' => 'TIDAK LULUS', 'keterangan' => 'Gagal'];
+        }
+    }
 
 }
 class MataKuliah {
