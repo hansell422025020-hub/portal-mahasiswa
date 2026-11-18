@@ -30,22 +30,8 @@ $mhs = $dataMhs["mahasiswa"];
 $matkulTerpilih = $daftarMatkul[$kodeDipilih];
 $nilaiTerpilih  = $dataMhs["nilai"][$kodeDipilih] ?? null;
 
-function getPredikat($rataRata) {
-    if ($rataRata >= 85) {
-        return ['predikat' => 'A', 'badge' => 'bg-success', 'kelulusan' => 'LULUS', 'keterangan' => 'Sangat Baik'];
-    } elseif ($rataRata >= 75) {
-        return ['predikat' => 'B', 'badge' => 'bg-success', 'kelulusan' => 'LULUS', 'keterangan' => 'Baik'];
-    } elseif ($rataRata >= 65) {
-        return ['predikat' => 'C', 'badge' => 'bg-success', 'kelulusan' => 'LULUS', 'keterangan' => 'Cukup'];
-    } elseif ($rataRata >= 50) {
-        return ['predikat' => 'D', 'badge' => 'bg-danger', 'kelulusan' => 'TIDAKLULUS', 'keterangan' => 'Kurang'];
-    } else {
-        return ['predikat' => 'E', 'badge' => 'bg-dnger', 'kelulusan' => 'TIDAK LULUS', 'keterangan' => 'Gagal'];
-    }
-}
-
 $rataRata = $nilaiTerpilih->hitungRataRata($nilaiTerpilih->nilaiTugas, $nilaiTerpilih->nilaiUTS, $nilaiTerpilih->nilaiUAS);
-$hasilPredikat = getPredikat($rataRata);
+$hasilPredikat = $nilaiTerpilih->getPredikat($rataRata);
 
 ?>
 
